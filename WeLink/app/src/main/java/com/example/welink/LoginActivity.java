@@ -6,12 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.welink.MODEL.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,59 +28,12 @@ import static com.google.firebase.database.FirebaseDatabase.getInstance;
 
 public class LoginActivity extends AppCompatActivity {
     EditText emailEditText,passwordEditText;
+    TextView createAccount;
     Button loginButton;
     private String rootDb = "Users";
+    private FirebaseAuth mAuth;
 
 
-
-
-    //// --------------- code for user login starts ------------------------////
-
-    public void userLogin(){
-        String password = passwordEditText.getText().toString();
-        String email = emailEditText.getText().toString();
-        if(TextUtils.isEmpty(password)){
-            Toast.makeText(this, "Enter A Password", Toast.LENGTH_SHORT).show();
-        }else if(TextUtils.isEmpty(email)){
-            Toast.makeText(this, "Email is empty", Toast.LENGTH_SHORT).show();
-        }else{
-            accountAccess(email,password);
-        }
-    }
-
-
-    private void accountAccess(final String email, final String password) {
-
-        DatabaseReference rootRef = getInstance().getReference();
-        rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(rootDb).child(email).exists()){
-                    User userData = dataSnapshot.child(rootDb).child(email).getValue(User.class);
-                    if(userData.getEmail().equals(email)) {
-                        if(userData.getPassword().equals(password)){
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                        }else{
-                            Toast.makeText(LoginActivity.this, "Incorrect Password", Toast.LENGTH_SHORT).show();
-                        }
-                    }else{
-                        Toast.makeText(LoginActivity.this, "No record for this phone No.", Toast.LENGTH_SHORT).show();
-                    }
-
-                }else {
-                    Toast.makeText(LoginActivity.this, "Account Doesn't Exist", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    //// --------------- code for user login ends------------------------////
 
 
 
@@ -82,16 +42,74 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+        mAuth = FirebaseAuth.getInstance();
+
         emailEditText = findViewById(R.id.emailLogin);
         passwordEditText = findViewById(R.id.passLogin);
         loginButton = (Button) findViewById(R.id.loginButton);
+        createAccount = (TextView) findViewById(R.id.createAccount);
+
+
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userLogin();
+                AllowLogin();
             }
         });
+
+
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this,SignupActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private void AllowLogin() {
+        String email = emailEditText.getText().toString();
+        String pass = passwordEditText.getText().toString();
+
+        if(TextUtils.isEmpty(email)){
+            Toast.makeText(this, "Please Provide a email", Toast.LENGTH_SHORT).show();
+        }else if(TextUtils.isEmpty(pass)){
+            Toast.makeText(this, "Please Provide your password", Toast.LENGTH_SHORT).show();
+        }else{
+            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(LoginActivity.this, "Log in successfull", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+
+                    }else{
+                        Toast.makeText(LoginActivity.this, "Email Or Password Incorrent", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 }
