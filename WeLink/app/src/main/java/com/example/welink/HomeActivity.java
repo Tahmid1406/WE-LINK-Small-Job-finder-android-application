@@ -2,13 +2,22 @@ package com.example.welink;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
+import com.example.welink.Fragments.AllUserFragment;
+import com.example.welink.Fragments.HomeFragment;
+import com.example.welink.Fragments.NotificationFragment;
+import com.example.welink.Fragments.ProfileFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,12 +30,26 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference userRef;
     Button logOutBtn;
+    private BottomNavigationView mainNav;
+    private FrameLayout mainFrame;
+    private HomeFragment homeFragment;
+    private AllUserFragment allUserFragment;
+    private ProfileFragment profileFragment;
+    private NotificationFragment notificationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         logOutBtn = findViewById(R.id.logoutBtn);
+        mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
+        mainNav = (BottomNavigationView) findViewById(R.id.bottomNav);
+
+        //getting the fragments
+        homeFragment = new HomeFragment();
+        allUserFragment = new AllUserFragment();
+        profileFragment = new ProfileFragment();
+        notificationFragment = new NotificationFragment();
 
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -43,7 +66,40 @@ public class HomeActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+        mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.home:
+                        addFragment(homeFragment);
+                        return true;
+                    case R.id.friendList:
+                        addFragment(allUserFragment);
+                        return true;
+                    case R.id.profile:
+                        addFragment(profileFragment);
+                        return true;
+                    case R.id.notification:
+                        addFragment(notificationFragment);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+
     }
+
+    private void addFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.mainFrame,fragment);
+        fragmentTransaction.commit();
+    }
+
 
 
     @Override
@@ -59,6 +115,9 @@ public class HomeActivity extends AppCompatActivity {
         }else{
             CheckUserExistance();
         }
+
+
+        addFragment(homeFragment);
     }
 
     private void CheckUserExistance() {
