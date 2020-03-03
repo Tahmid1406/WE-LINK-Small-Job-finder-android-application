@@ -1,15 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.AllUserFragment">
+    tools:context=".Fragments.AllUserFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <TableRow
+        android:id="@+id/tablerow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="This will show all users"
-        android:textSize="36dp"/>
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/imageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image"
+            android:textSize="16dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/QuantityTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16dp"
+            android:text="Name" />
+
+    </TableRow>
+
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"/>
+
+    <TextView
+        android:id="@+id/AllUser"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Total Users : "
+        android:textSize="24sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"/>
+
+</LinearLayout>
