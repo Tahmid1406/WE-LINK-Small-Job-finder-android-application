@@ -24,8 +24,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ import java.util.ArrayList;
  */
 public class AllUserFragment extends Fragment {
     private RecyclerView recyclerview;
+    int totalUser = 0;
     private DatabaseReference userRef;
     private TextView AllUser;
     private ArrayList<User> users;
@@ -91,7 +95,22 @@ public class AllUserFragment extends Fragment {
 
 
         recyclerview.setAdapter(adapter);
+        adapter.startListening();
 
+        userRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    totalUser = (int) dataSnapshot.getChildrenCount();
+                    AllUser.setText("Total User : " + Integer.toString(totalUser));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         return rootview;
