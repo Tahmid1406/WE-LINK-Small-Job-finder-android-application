@@ -2,6 +2,7 @@ package com.example.welink.Fragments;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.welink.HomeActivity;
 import com.example.welink.LoginActivity;
 import com.example.welink.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,17 +29,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileFragment extends Fragment {
     private CircleImageView imageUpdate;
-    TextView emailText,genderText,logoutText;
+    TextView emailText,genderText,logoutText,updateText;
     EditText nameEdit, occEdit, phoneEdit,ageEdit;
     private FirebaseAuth mAuth;
-
 
     public ProfileFragment() {
     }
@@ -48,6 +54,7 @@ public class ProfileFragment extends Fragment {
         View rootview =  inflater.inflate(R.layout.fragment_profile, container, false);
 
         //getting all the things needed
+        updateText = rootview.findViewById(R.id.updateText);
         logoutText = rootview.findViewById(R.id.logoutText);
         imageUpdate = rootview.findViewById(R.id.imageUpdate);
         emailText = rootview.findViewById(R.id.emailEdit);
@@ -57,7 +64,7 @@ public class ProfileFragment extends Fragment {
         phoneEdit = rootview.findViewById(R.id.phoneUpdate);
         ageEdit = rootview.findViewById(R.id.ageUpdate);
         mAuth = FirebaseAuth.getInstance();
-
+        print();
         //first setting up the current setting to the profile
         setUserInfo();
 
@@ -71,7 +78,59 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
+        updateText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String name = nameEdit.getText().toString();
+                final String occ = occEdit.getText().toString();
+                final String phone = phoneEdit.getText().toString();
+                final String age = ageEdit.getText().toString();
+                final String uid = mAuth.getCurrentUser().getUid();
+                final DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+                updateRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String snapMail = dataSnapshot.child("mail").getValue().toString();
+                        String snapImage = dataSnapshot.child("image").getValue().toString();
+                        String snapgender = dataSnapshot.child("gender").getValue().toString();
+                        HashMap<Object, String> updateMap = new HashMap<>();
+                        updateMap.put("name", name);
+                        updateMap.put("occupation", occ);
+                        updateMap.put("phone", phone);
+                        updateMap.put("age", age);
+                        updateMap.put("mail", snapMail);
+                        updateMap.put("image", snapImage);
+                        updateMap.put("gender", snapgender);
+                        updateRef.setValue(updateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    setUserInfo();
+                                    Toast.makeText(ProfileFragment.this.getContext(), "Account Information Updated", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(ProfileFragment.this.getContext(), "Update Failed ! ", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+
+
         return rootview;
+    }
+
+    private void print() {
+        String uid = mAuth.getCurrentUser().getUid();
+        Toast.makeText(ProfileFragment.this.getContext(), uid, Toast.LENGTH_SHORT).show();
     }
 
 
