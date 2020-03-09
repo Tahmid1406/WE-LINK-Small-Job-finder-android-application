@@ -12,12 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.example.welink.Fragments.AllUserFragment;
 import com.example.welink.Fragments.HomeFragment;
 import com.example.welink.Fragments.NotificationFragment;
+import com.example.welink.Fragments.PostFragment;
 import com.example.welink.Fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +38,8 @@ public class HomeActivity extends AppCompatActivity {
     private AllUserFragment allUserFragment;
     private ProfileFragment profileFragment;
     private NotificationFragment notificationFragment;
+    private PostFragment postFragment;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +47,25 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
         mainNav = (BottomNavigationView) findViewById(R.id.bottomNav);
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         //getting the fragments
         homeFragment = new HomeFragment();
         allUserFragment = new AllUserFragment();
         profileFragment = new ProfileFragment();
         notificationFragment = new NotificationFragment();
+        postFragment = new PostFragment();
 
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
 
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFragment(postFragment);
+            }
+        });
         mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
