@@ -39,7 +39,6 @@ public class HomeActivity extends AppCompatActivity {
     private ProfileFragment profileFragment;
     private NotificationFragment notificationFragment;
     private PostFragment postFragment;
-    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
         mainNav = (BottomNavigationView) findViewById(R.id.bottomNav);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
         //getting the fragments
         homeFragment = new HomeFragment();
         allUserFragment = new AllUserFragment();
@@ -58,14 +56,6 @@ public class HomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addFragment(postFragment);
-            }
-        });
         mainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -82,6 +72,9 @@ public class HomeActivity extends AppCompatActivity {
                         return true;
                     case R.id.notification:
                         addFragment(notificationFragment);
+                        return true;
+                    case R.id.post:
+                        addFragment(postFragment);
                         return true;
                     default:
                         return false;
