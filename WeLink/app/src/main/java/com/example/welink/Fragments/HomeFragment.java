@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.welink.MODEL.User;
 import com.example.welink.MODEL.post;
@@ -37,6 +39,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference postRef;
     private FirebaseRecyclerOptions<post> options;
     private FirebaseRecyclerAdapter<post, PostViewHolder> adapter;
+    private DatabaseReference commentRef;
 
     public HomeFragment() {
 
@@ -64,11 +67,26 @@ public class HomeFragment extends Fragment {
         adapter = new FirebaseRecyclerAdapter<post, PostViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull PostViewHolder holder, int i, @NonNull post post) {
+                final String POSTKey = getRef(i).getKey();
                 Picasso.with(HomeFragment.this.getContext()).load(post.getImage()).fit().centerInside().into(holder.post_profile_image);
                 holder.post_user_name.setText(post.getUsername());
                 holder.postedDate.setText(post.getDate());
                 holder.postedTime.setText(post.getTime());
                 holder.post_description.setText(post.getDescription());
+
+                holder.commentBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Fragment newFragment = new CommentFragment();
+                        Bundle args = new Bundle();
+                        args.putString("POSTKey",POSTKey);
+                        newFragment.setArguments(args);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.mainFrame, newFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                });
             }
 
             @NonNull

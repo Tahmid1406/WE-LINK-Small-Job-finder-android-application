@@ -10,7 +10,8 @@
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:background="@drawable/post_border">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,6 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="date"
+                        android:layout_marginLeft="5dp"
                         android:textColor="@android:color/black"
                         android:textSize="13sp"/>
 
@@ -70,7 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Time"
-                        android:layout_marginLeft="2dp"
+                        android:layout_marginLeft="5dp"
                         android:textColor="@android:color/black"
                         android:textSize="13sp"/>
                 </LinearLayout>
@@ -88,6 +90,23 @@
             android:padding="3dp"
             android:textSize="14sp"
             android:textColor="@android:color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+            <Button
+                android:id="@+id/commentBtn"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_round_button"
+                android:text="Add Comment"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 
