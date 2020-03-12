@@ -112,4 +112,6 @@ public class HomeFragment extends Fragment {
         super.onStop();
         adapter.stopListening();
     }
+
+
 }

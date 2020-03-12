@@ -21,7 +21,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/commentAdd"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="2dp"
+        android:layout_above="@+id/commentInput"/>
     <EditText
         android:id="@+id/commentInput"
         android:layout_width="match_parent"
@@ -40,8 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/commentInput"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/send"
-        android:padding="15dp"/>
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/send" />
 
 
 </RelativeLayout>

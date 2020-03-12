@@ -17,7 +17,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.welink.MODEL.comment;
+import com.example.welink.MODEL.post;
 import com.example.welink.R;
+import com.example.welink.ViewHolder.CommentViewHolder;
+import com.example.welink.ViewHolder.PostViewHolder;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +49,9 @@ public class CommentFragment extends Fragment {
     private DatabaseReference userRef,postRef;
     private FirebaseAuth mAuth;
     String cuurentUser,POSTKey;
+    private FirebaseRecyclerOptions<comment> options;
+    private FirebaseRecyclerAdapter<comment, CommentViewHolder> adapter;
+    private DatabaseReference commentRef;
 
     public CommentFragment() {
         // Required empty public constructor
@@ -80,18 +89,49 @@ public class CommentFragment extends Fragment {
         postRef = FirebaseDatabase.getInstance().getReference().child("Posts").child(POSTKey).child("comments");
         mAuth = FirebaseAuth.getInstance();
 
+        commentRef = FirebaseDatabase.getInstance().getReference().child("Posts").child(POSTKey).child("comments");
+        commentRef.keepSynced(true);
+        options = new FirebaseRecyclerOptions.Builder<comment>().setQuery(commentRef,comment.class).build();
+        adapter = new FirebaseRecyclerAdapter<comment, CommentViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull CommentViewHolder holder, int i, @NonNull comment comment) {
+                holder.comment_user_name.setText(comment.getUsername());
+                holder.comment_text.setText(comment.getComment());
+                holder.comment_time.setText(comment.getTime());
+                holder.comment_date.setText(comment.getDate());
+            }
 
+            @NonNull
+            @Override
+            public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new CommentViewHolder(LayoutInflater.from(CommentFragment.this.getContext()).inflate(R.layout.all_comments_layout, parent, false));
+            }
+        };
+
+        commentList.setAdapter(adapter);
+        adapter.startListening();
 
         post_comment_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CommentFragment.this.getContext(), "ok", Toast.LENGTH_SHORT).show();
                 validateComment();
             }
         });
 
 
         return rootview;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     private void validateComment() {
