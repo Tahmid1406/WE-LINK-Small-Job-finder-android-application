@@ -2,7 +2,6 @@ package com.example.welink.Fragments;
 
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,8 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.welink.HomeActivity;
-import com.example.welink.LoginActivity;
+import com.example.welink.View.LoginActivity;
 import com.example.welink.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

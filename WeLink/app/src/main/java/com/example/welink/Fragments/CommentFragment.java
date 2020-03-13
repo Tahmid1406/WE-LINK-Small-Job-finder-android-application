@@ -1,6 +1,8 @@
 package com.example.welink.Fragments;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,10 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.support.v4.app.INotificationSideChannel;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -25,6 +29,8 @@ import com.example.welink.ViewHolder.PostViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -32,11 +38,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.zip.CheckedOutputStream;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.COMPANION_DEVICE_SERVICE;
+import static android.content.Context.CONTEXT_IGNORE_SECURITY;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,13 +59,18 @@ public class CommentFragment extends Fragment {
     private ImageButton post_comment_button;
     private RecyclerView commentList;
     private EditText commentInput;
-    String saveCurrentDate,saveCurrentTime;
+    private String saveCurrentDate,saveCurrentTime,RandomKey,downloadUrl;
     private DatabaseReference userRef,postRef;
     private FirebaseAuth mAuth;
-    String cuurentUser,POSTKey;
+    private String cuurentUser,POSTKey;
     private FirebaseRecyclerOptions<comment> options;
     private FirebaseRecyclerAdapter<comment, CommentViewHolder> adapter;
     private DatabaseReference commentRef;
+    private ImageButton selectFile;
+    private StorageReference storageReference;
+    private DatabaseReference databaseReference;
+    private Uri fileUri;
+    private Button uploadCv;
 
     public CommentFragment() {
         // Required empty public constructor
@@ -59,13 +78,19 @@ public class CommentFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootview =  inflater.inflate(R.layout.fragment_comment, container, false);
         post_comment_button = rootview.findViewById(R.id.post_comment_button);
         commentList = rootview.findViewById(R.id.commentList);
         commentInput = rootview.findViewById(R.id.commentInput);
+        selectFile = rootview.findViewById(R.id.selectFile);
+        uploadCv = rootview.findViewById(R.id.uploadCv);
+
+
+        storageReference = FirebaseStorage.getInstance().getReference().child("CVs");
+
         Calendar calendar = Calendar.getInstance();
 
         SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
@@ -114,24 +139,40 @@ public class CommentFragment extends Fragment {
         post_comment_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateComment();
+               validateComment();
             }
         });
+
+        uploadCv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CommentFragment.this.getContext(), "works", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        selectFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/pdf");
+                startActivityForResult(Intent.createChooser(intent,"Select PDF File"),438);
+            }
+        });
+
 
 
         return rootview;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 438 && resultCode==RESULT_OK && data != null && data.getData()!=null){
+            fileUri = data.getData();
+
+        }
     }
 
     private void validateComment() {
