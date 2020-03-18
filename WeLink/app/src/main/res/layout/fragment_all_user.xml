@@ -6,6 +6,17 @@
     tools:context=".Fragments.AllUserFragment"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Our Users"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:layout_marginBottom="3sp"
+        android:textColor="#2E314B"
+        android:background="#93C97F"
+        android:inputType="textMultiLine"
+        android:layout_gravity="top"/>
     <TableRow
         android:id="@+id/tablerow"
         android:layout_width="match_parent"
@@ -44,15 +55,5 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="10dp" />
 
-    <TextView
-        android:id="@+id/AllUser"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="15dp"
-        android:text="Total Users : "
-        android:textSize="24sp" />
 
 </LinearLayout>

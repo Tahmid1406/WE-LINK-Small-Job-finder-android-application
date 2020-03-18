@@ -40,9 +40,7 @@ import java.util.ArrayList;
  */
 public class AllUserFragment extends Fragment {
     private RecyclerView recyclerview;
-    int totalUser = 0;
     private DatabaseReference userRef;
-    private TextView AllUser;
     private ArrayList<User> users;
     private FirebaseRecyclerOptions<User> options;
     private FirebaseRecyclerAdapter<User, UserViewHolder> adapter;
@@ -72,7 +70,6 @@ public class AllUserFragment extends Fragment {
         recyclerview = (RecyclerView) rootview.findViewById(R.id.recyclerview);
         recyclerview.setHasFixedSize(true);
         recyclerview.setLayoutManager(new LinearLayoutManager(AllUserFragment.this.getContext()));
-        AllUser = (TextView) rootview.findViewById(R.id.AllUser);
 
         users = new ArrayList<User>();
 
@@ -98,23 +95,6 @@ public class AllUserFragment extends Fragment {
 
         recyclerview.setAdapter(adapter);
         adapter.startListening();
-
-        userRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    totalUser = (int) dataSnapshot.getChildrenCount();
-                    AllUser.setText("Total User : " + Integer.toString(totalUser));
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
         return rootview;
     }
 

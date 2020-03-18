@@ -109,7 +109,6 @@ public class CommentFragment extends Fragment {
         cuurentUser = mAuth.getCurrentUser().getUid();
 
         POSTKey = getArguments().getString("POSTKey");
-        Toast.makeText(CommentFragment.this.getContext(), POSTKey, Toast.LENGTH_SHORT).show();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
         postRef = FirebaseDatabase.getInstance().getReference().child("Posts").child(POSTKey).child("comments");
         mAuth = FirebaseAuth.getInstance();
@@ -136,12 +135,12 @@ public class CommentFragment extends Fragment {
         commentList.setAdapter(adapter);
         adapter.startListening();
 
-        /*post_comment_button.setOnClickListener(new View.OnClickListener() {
+        post_comment_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                validateComment();
             }
-        });*/
+        });
 
         uploadCv.setOnClickListener(new View.OnClickListener() {
             @Override

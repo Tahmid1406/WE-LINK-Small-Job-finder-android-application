@@ -62,7 +62,6 @@ public class ProfileFragment extends Fragment {
         phoneEdit = rootview.findViewById(R.id.phoneUpdate);
         ageEdit = rootview.findViewById(R.id.ageUpdate);
         mAuth = FirebaseAuth.getInstance();
-        print();
         //first setting up the current setting to the profile
         setUserInfo();
 
@@ -124,11 +123,6 @@ public class ProfileFragment extends Fragment {
 
 
         return rootview;
-    }
-
-    private void print() {
-        String uid = mAuth.getCurrentUser().getUid();
-        Toast.makeText(ProfileFragment.this.getContext(), uid, Toast.LENGTH_SHORT).show();
     }
 
 
