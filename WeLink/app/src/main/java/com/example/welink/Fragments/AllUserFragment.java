@@ -71,7 +71,7 @@ public class AllUserFragment extends Fragment {
 
         recyclerview = (RecyclerView) rootview.findViewById(R.id.recyclerview);
         recyclerview.setHasFixedSize(true);
-        recyclerview.setLayoutManager(new LinearLayoutManager(AllUserFragment.this.getContext() ));
+        recyclerview.setLayoutManager(new LinearLayoutManager(AllUserFragment.this.getContext()));
         AllUser = (TextView) rootview.findViewById(R.id.AllUser);
 
         users = new ArrayList<User>();

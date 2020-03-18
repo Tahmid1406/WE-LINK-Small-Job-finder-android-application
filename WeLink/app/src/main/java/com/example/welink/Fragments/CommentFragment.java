@@ -136,12 +136,12 @@ public class CommentFragment extends Fragment {
         commentList.setAdapter(adapter);
         adapter.startListening();
 
-        post_comment_button.setOnClickListener(new View.OnClickListener() {
+        /*post_comment_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                validateComment();
             }
-        });
+        });*/
 
         uploadCv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,26 +153,10 @@ public class CommentFragment extends Fragment {
         selectFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("application/pdf");
-                startActivityForResult(Intent.createChooser(intent,"Select PDF File"),438);
+
             }
         });
-
-
-
         return rootview;
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 438 && resultCode==RESULT_OK && data != null && data.getData()!=null){
-            fileUri = data.getData();
-
-        }
     }
 
     private void validateComment() {
@@ -214,5 +198,6 @@ public class CommentFragment extends Fragment {
             }
         });
     }
+
 
 }

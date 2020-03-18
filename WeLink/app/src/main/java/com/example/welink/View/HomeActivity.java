@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 
 import com.example.welink.Fragments.AllUserFragment;
@@ -48,7 +49,6 @@ public class HomeActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
         notificationFragment = new NotificationFragment();
         postFragment = new PostFragment();
-
         mAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
 

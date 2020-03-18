@@ -37,7 +37,7 @@ public class PostFragment extends Fragment {
     private Button postBtn;
     private FirebaseAuth mAuth;
     private String postImage, postName,currentUser_id,saveCurrentDate,saveCurrentTime,randomKey;
-    private DatabaseReference userRef,postRef;
+    private DatabaseReference userRef,postRef,notifRef;
     private EditText postDescription;
     FrameLayout mframeLayout;
 
@@ -59,6 +59,7 @@ public class PostFragment extends Fragment {
         currentUser_id = mAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child("Users");
         postRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        notifRef = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
         Calendar calendar = Calendar.getInstance();
 
@@ -72,11 +73,39 @@ public class PostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 savePost();
+                saveNotif();
             }
         });
 
         return rootview;
     }
+
+    private void saveNotif() {
+        userRef.child(currentUser_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String snapName = dataSnapshot.child("name").getValue().toString();
+                HashMap notification = new HashMap();
+                notification.put("name", snapName);
+                notification.put("time", saveCurrentTime);
+                notifRef.child(currentUser_id + randomKey).updateChildren(notification).addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()){
+                            //do something
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
 
     private void savePost() {
         userRef.child(currentUser_id).addValueEventListener(new ValueEventListener() {
